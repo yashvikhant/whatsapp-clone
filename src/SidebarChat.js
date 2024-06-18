@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import { useStateValue } from "./StateProvider";
 import './SidebarChat.css'
 import {Link} from 'react-router-dom'
 import { Avatar } from '@material-ui/core'
@@ -9,10 +10,11 @@ function SidebarChat({addNewChat, name, id}) {
 
     const [seed, setSeed] = useState('');
     const [messages, setMessages] = useState('');
+    const [{user}, dispatch] = useStateValue();
 
     useEffect(() => {
         if(id) {
-            const messagesRef = collection(db, 'rooms', id, 'messages');
+            const messagesRef = collection(db, 'users',user.userId, 'rooms', id, 'messages');
             const q = query(messagesRef ,orderBy('timestamp','desc'));
             onSnapshot(q, (querySnapshot) => {
                 const messages = querySnapshot.docs.map(doc => doc.data());
@@ -34,8 +36,8 @@ function SidebarChat({addNewChat, name, id}) {
         }
     }
 
-  return !addNewChat ? (
-    <Link to={`/rooms/${id}`}>
+  return (
+    <Link to={`${user.userId}/rooms/${id}`}>
         <div className='sidebarChat'>
             <Avatar src={`https://api.multiavatar.com/${seed}.png`}/>
             <div className='sidebarChat_info'>
@@ -44,10 +46,6 @@ function SidebarChat({addNewChat, name, id}) {
             </div>
         </div>
     </Link>
-  ) : (
-    <div onClick={createChat} className='sidebarChat'>
-        <h2> Add new Chat</h2>
-    </div>
   )
 }
 

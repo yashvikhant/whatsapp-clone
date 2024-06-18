@@ -15,15 +15,15 @@ function App() {
         <Login/>
       ) : (
         <div className='app_body'>
-          <Router>
             <Sidebar />
               <Routes>
-                <Route path="/rooms/:roomId" element={<Chat/>}>
+                <Route path="/:userId/rooms/:roomId" element={<Chat/>}>
+                </Route>
+                <Route path="/:userId" element={<Chat/>}>
                 </Route>
                 <Route path="/" element={<Chat/>}>
                 </Route>
               </Routes>
-            </Router>
         </div>
       )}
     </div>

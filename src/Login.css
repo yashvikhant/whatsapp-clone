@@ -21,7 +21,7 @@
     margin-bottom: 40px;
   }
   
-  .login__container > button {
+  .login__container > Link {
     margin-top: 50px;
     text-transform: inherit !important;
     background-color: #0a8d48;

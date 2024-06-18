@@ -14,7 +14,7 @@ function Sidebar() {
     const [rooms, setRooms] = useState([]);
     const [{user}, dispatch] = useStateValue();
     useEffect(() => {
-        const unsubscribe = onSnapshot(collection(db, "rooms"), (snapshot) => {
+        const unsubscribe = onSnapshot(collection(db, 'users', user.userId, 'rooms'), (snapshot) => {
             setRooms(
               snapshot.docs.map((doc) => ({
                 id: doc.id,
@@ -49,7 +49,6 @@ function Sidebar() {
             </div>
         </div>
         <div className='sidebar_chats'>
-           <SidebarChat addNewChat/>
            {rooms.map((room) => (
                 <SidebarChat key={room.id} id={room.id} name={room.data.name} />
             ))}
