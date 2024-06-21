@@ -6,7 +6,7 @@ import {signInWithPopup} from 'firebase/auth';
 import { useStateValue } from "./StateProvider";
 import { actionTypes } from "./reducer";
 import db from './firebase';
-import { collection, getDocs } from 'firebase/firestore';
+import { addDoc, collection, getDocs } from 'firebase/firestore';
 import { Link } from 'react-router-dom';
 
 function Login() {
@@ -17,15 +17,21 @@ function Login() {
         getDocs(collection(db,'users')).then((docs)=>{
             docs.forEach((doc)=> {
                 if(doc.data().username === username && doc.data().password === password) {
+                    sessionStorage.setItem('user', JSON.stringify({
+                        userId: doc.id,
+                        username: doc.data().name,
+                    }))
+                    console.log(JSON.parse(sessionStorage.getItem('user')).username)
                     dispatch({
                         type: actionTypes.SET_USER,
-                        user: {
-                            userId: doc.id,
-                            username: doc.data().name,
-                        },
+                        user: JSON.parse(sessionStorage.getItem('user'))
                     })
                 }
             })
+        })
+        const activeUsersRef = collection(db,'activeUsers')
+        addDoc(activeUsersRef,{
+            username: username
         })
         // signInWithPopup(auth,provider).then((result) => {
         //     dispatch({

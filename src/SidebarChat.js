@@ -6,12 +6,13 @@ import { Avatar } from '@material-ui/core'
 import { collection, addDoc, query, orderBy, onSnapshot } from 'firebase/firestore';
 import db from "./firebase";
 
-function SidebarChat({addNewChat, name, id}) {
+function SidebarChat({addNewChat, name, id, online}) {
 
     const [seed, setSeed] = useState('');
     const [messages, setMessages] = useState('');
     const [{user}, dispatch] = useStateValue();
-
+    const user2 = JSON.parse(sessionStorage.getItem('user'))
+    
     useEffect(() => {
         if(id) {
             const messagesRef = collection(db, 'users',user.userId, 'rooms', id, 'messages');
@@ -21,7 +22,7 @@ function SidebarChat({addNewChat, name, id}) {
                 setMessages(messages);
             })
         }
-    },[id])
+    },[])
 
     useEffect(() => {
         setSeed(Math.floor(Math.random()*5000));
@@ -35,6 +36,7 @@ function SidebarChat({addNewChat, name, id}) {
             });
         }
     }
+    console.log(online)
 
   return (
     <Link to={`${user.userId}/rooms/${id}`}>
@@ -44,6 +46,7 @@ function SidebarChat({addNewChat, name, id}) {
                 <h2>{name}</h2>
                 <p>{messages[0]?.message}</p>
             </div>
+            {online?<span style={{ display: 'flex-end', width: '10px', height: '10px', borderRadius: '50%', backgroundColor: 'green',marginRight: '5px'}}/>:null}
         </div>
     </Link>
   )

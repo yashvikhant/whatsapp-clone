@@ -16,6 +16,7 @@ function Chat() {
     const [roomName, setRoomName] = useState("");
     const [messages, setMessages] = useState([]);
     const [{user}, dispatch] = useStateValue();
+    const [activeUsers,setActiveUsers] = useState([]);
 
     useEffect(() => {
         if(roomId) {
@@ -31,6 +32,11 @@ function Chat() {
                 markAsRead(msgs)
                 console.log(msgs);
             })
+            const activeUsersRef = collection(db, 'activeUsers');
+            onSnapshot(activeUsersRef, (snapshot) => {
+            const onlineUsers = snapshot.docs.map((doc) => doc.data().username);
+            setActiveUsers(onlineUsers);
+            });
         }
     }, [roomId])
 
@@ -59,21 +65,6 @@ function Chat() {
                                 }
                             })
                         })
-                        // const q = query(senderMessagesRef, where('name', '==', msg.name), where('read', '==', false));
-                        // console.log(q)
-                        // await getDocs(q).then(async (docs)=> {
-                        //     console.log(docs)
-                        //     for (const messageDoc of docs) {
-                        //         const messageRef = doc(db, 'users', senderUserId, 'rooms', receiverRoomId, 'messages', messageDoc.id);
-                        //         console.log(messageRef);
-                        //         try {
-                        //             await updateDoc(messageRef, { read: true });
-                        //         } catch (error) {
-                        //             console.error("Error updating document: ", messageDoc.id, error);
-                        //         }
-                        //     }
-                        // });
-                        // Update all messages to mark them as read
                         
                     }
                 }
@@ -112,7 +103,7 @@ function Chat() {
             name: user.username,
             message: input,
             sent: true,
-            delivered: true,
+            delivered: activeUsers.includes(roomName),
             read: false,
             timestamp: serverTimestamp()
         })
@@ -130,7 +121,7 @@ function Chat() {
                                     name: user.username,
                                     message: input,
                                     sent: true,
-                                    delivered: true,
+                                    delivered: activeUsers.includes(roomName),
                                     read: false,
                                     timestamp: serverTimestamp()
                                 }).then(()=> {

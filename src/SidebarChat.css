@@ -21,4 +21,5 @@ a {
 
 .sidebarChat_info {
     margin-left: 15px;
+    flex: 1
 }

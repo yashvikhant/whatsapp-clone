@@ -5,10 +5,25 @@ import Sidebar from './Sidebar';
 import Chat from './Chat.js';
 import Login from './Login.js';
 import { useStateValue } from "./StateProvider";
+import { collection, deleteDoc, doc, getDocs } from 'firebase/firestore';
+import db from './firebase';
 
 function App() {
   const [{ user }, dispatch] = useStateValue();
+  const user2 = JSON.parse(sessionStorage.getItem('user'))
 
+  console.log("logging out", user,user2)
+  if(!user && user2){
+    getDocs(collection(db,'activeUsers')).then((docs)=> {
+      docs.forEach(active => {
+        if(active.data().username === user2.username){
+          deleteDoc(doc(db,'activeUsers',active.id)).then(()=> {
+            sessionStorage.removeItem('user')
+          })
+        }
+      });
+    })
+  }
   return (
     <div className="app">
       {!user ? (
